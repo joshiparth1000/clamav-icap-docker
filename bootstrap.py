@@ -8,6 +8,9 @@ import time
 log.basicConfig(stream=sys.stderr, level=os.environ.get("LOG_LEVEL", "WARNING"))
 logger=log.getLogger(__name__)
 
+if os.path.exists("/tmp/clamd.sock"):
+    os.remove("/tmp/clamd.sock")
+
 if not os.path.isfile("/store/main.cvd"):
     logger.info("Initial clam DB download.")
     os.system("freshclam")
