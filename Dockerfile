@@ -29,5 +29,6 @@ COPY bootstrap.py /
 RUN chmod +x /bootstrap.py
 
 EXPOSE 1344
+EXPOSE 3310
 
 CMD ["/bootstrap.py"]
