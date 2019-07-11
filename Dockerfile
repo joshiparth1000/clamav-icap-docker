@@ -1,10 +1,10 @@
-FROM mk0x/docker-clamav:alpine
+FROM alpine:latest
 
 ARG VERSION=0.5.5
 ARG PLUGINS_VERSION=0.5.3
 
-RUN cd $HOME && apk update && \
-    apk add --no-cache gcc musl-dev zlib-dev file bzip2-dev git bc sed autoconf automake libtool tree make && \
+RUN cd $HOME && \
+    apk add --no-cache clamav clamav-libunrar gcc musl-dev zlib-dev file bzip2-dev git bc sed autoconf automake libtool tree make && \
     git clone https://github.com/google/brotli.git && \
     cd brotli && ./bootstrap && ./configure && make && make install && cd $HOME && rm -r brotli && \
     wget -O c-icap.tar.gz https://sourceforge.net/projects/c-icap/files/c-icap/0.5.x/c_icap-$VERSION.tar.gz/download && \
@@ -17,14 +17,15 @@ RUN cd $HOME && apk update && \
     libtool --finish /usr/local/c-icap/lib/c_icap/ && \
     apk del gcc musl-dev git autoconf automake make tree sed bc
 
+COPY clamd.conf /etc/clamav/
+COPY freshclam.conf /etc/clamav/
 COPY c-icap.conf /usr/local/c-icap/etc/
 COPY virus_scan.conf /usr/local/c-icap/etc/
 COPY clamd_mod.conf /usr/local/c-icap/etc/
-COPY bootstrap.py /
-
-RUN chmod +x /bootstrap.py
+COPY entrypoint.sh /usr/bin/
 
 EXPOSE 1344
-EXPOSE 3310
 
-CMD ["/bootstrap.py"]
+ENTRYPOINT ["entrypoint.sh"]
+
+HEALTHCHECK CMD /usr/local/c-icap/bin/c-icap-client < /dev/null || exit 1
