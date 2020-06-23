@@ -24,6 +24,8 @@ COPY virus_scan.conf /usr/local/c-icap/etc/
 COPY clamd_mod.conf /usr/local/c-icap/etc/
 COPY entrypoint.sh /usr/bin/
 
+RUN chmod +x /usr/bin/entrypoint.sh
+
 EXPOSE 1344
 
 ENTRYPOINT ["entrypoint.sh"]
