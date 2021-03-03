@@ -26,6 +26,10 @@ COPY entrypoint.sh /usr/bin/
 
 RUN chmod +x /usr/bin/entrypoint.sh
 
+RUN mkdir /run/clamav
+RUN chmod 0770 /run/clamav
+RUN chown -R clamav:clamav /run/clamav
+
 EXPOSE 1344
 
 ENTRYPOINT ["entrypoint.sh"]
